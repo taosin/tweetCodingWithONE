@@ -2,7 +2,7 @@
 * @Author: iMocco
 * @Date:   2017-11-27 10:35:16
 * @Last Modified by:   iMocco
-* @Last Modified time: 2017-11-27 10:36:29
+* @Last Modified time: 2017-11-27 10:45:10
 */
 
 'use strict'
@@ -21,6 +21,5 @@ var codingService = require('./codingService')
     // codingService.runAddTweet()
     // codingService.runLikePop()
 app.use(express.static(__dirname + '/public/'))
-app.use(authority.setCrossDomain)
 var appServer = new Server(app)
 appServer.start()
