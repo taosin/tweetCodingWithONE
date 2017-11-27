@@ -8,8 +8,8 @@
 var config = {
   // 服务的链接数据
   port: 8119,
-  username: 'yourappId',
-  password: 'yourappkey'
+  username: 'username',
+  password: 'password'
 }
 
 module.exports = config
