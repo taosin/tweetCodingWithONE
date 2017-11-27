@@ -2,7 +2,7 @@
 * @Author: iMocco
 * @Date:   2017-11-27 10:36:44
 * @Last Modified by:   iMocco
-* @Last Modified time: 2017-11-27 15:28:22
+* @Last Modified time: 2017-11-27 15:50:06
 */
 
 'use strict';
@@ -12,7 +12,7 @@ var url = require('url')
 var https = require('https')
 var querystring = require('querystring')
 var cookie = require('cookie-parser')
-var sid = 'c6eb845b-21cb-e3a3-17e6-ac626d84e68b'
+var sid = 'fb54a6bf-2af9-4ab7-9ccd-68ea3b1f919r'
 var request = require('request')
 var cheerio = require('cheerio')
 var CronJob = require('cron').CronJob
@@ -45,6 +45,7 @@ class CodingService {
 	// 登录Coding
 	loginCoding(){
 		var self = this
+		self.createSidWithMd5()
 		var data = querystring.stringify({
 			account: config.username,
 			password: config.password
@@ -57,6 +58,7 @@ class CodingService {
 				var result = JSON.parse(chunk)
 				if (result.code === 0) {
 					console.log('success')
+					self.addTweet()
 				}else{
 					console.log(chunk);
 				}
@@ -83,31 +85,33 @@ class CodingService {
 	}
 
 	// 发布冒泡
-	addTweet(text){
+	addTweet(){
 		var self = this
 		self.getTextFromONE().then(function (result) {
-			text = result
+			var text = result
+			var data = querystring.stringify({
+				content: '#早安# ' + text + ' *---摘自「一个」*',
+				location: '上海',
+				device: self.getRandomDevice()
+			});
+
+			options.path = '/api/social/tweet'
+
+			var reqq = https.request(options, function(ress) {
+				ress.setEncoding('utf8');
+				ress.on('data', function(chunk) {
+					if(JSON.parse(chunk).code===1000){
+						self.loginCoding()
+					}
+				});
+				ress.on('end', function(chunk) {
+					console.log("body: " + chunk);
+				})
+			});
+			reqq.write(data);
+			reqq.end();
 		})
 
-		var data = querystring.stringify({
-			content: '#早安# ' + text + ' *---摘自「一个」*',
-			location: '上海',
-			device: self.getRandomDevice()
-		});
-
-		options.path = '/api/social/tweet'
-
-		var reqq = https.request(options, function(ress) {
-			ress.setEncoding('utf8');
-			ress.on('data', function(chunk) {
-				console.log(JSON.parse(chunk));
-			});
-			ress.on('end', function(chunk) {
-				console.log("body: " + chunk);
-			})
-		});
-		reqq.write(data);
-		reqq.end();
 	}
 
 	// 随机取出一个device
