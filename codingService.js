@@ -2,7 +2,7 @@
 * @Author: iMocco
 * @Date:   2017-11-27 10:36:44
 * @Last Modified by:   iMocco
-* @Last Modified time: 2017-11-27 14:19:23
+* @Last Modified time: 2017-11-27 15:07:07
 */
 
 'use strict';
@@ -69,6 +69,46 @@ class CodingService {
 		arr[3] = sid.substr(16,4)
 		arr[4] = sid.substr(20,12)
 		sid = arr.join('-')
+	}
+
+	// 发布冒泡
+	addTweet(text){
+		var self = this
+		text = 'halou'
+		var data = querystring.stringify({
+			content: '#早安# ' + text + ' *---摘自「一个」*',
+			location: '上海',
+			device: self.getRandomDevice()
+		});
+
+		options.path = '/api/social/tweet'
+
+		var reqq = https.request(options, function(ress) {
+			ress.setEncoding('utf8');
+			ress.on('data', function(chunk) {
+				console.log(JSON.parse(chunk));
+			});
+			ress.on('end', function(chunk) {
+				console.log("body: " + chunk);
+			})
+		});
+		reqq.write(data);
+		reqq.end();
+	}
+
+	// 随机取出一个device
+	getRandomDevice(){
+		var devices = ['iPhone 6s Plus', 'iPhone 6s', 'iPhone 7', 'iPhone 7 Plus', 'iPhone 8 Plus', 'iPhone 8', 'iPhone se', 'iPhone x']
+		var randomIndex = parseInt(Math.random() * 10)
+		if(randomIndex > devices.length){
+			return devices[2]
+		}else{
+			return devices[randomIndex]
+		}
+	}
+
+	// 获取ONE中的句子
+	getTextFromONE(){
 	}
 
 }
