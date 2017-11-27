@@ -2,7 +2,7 @@
 * @Author: iMocco
 * @Date:   2017-11-27 10:36:44
 * @Last Modified by:   iMocco
-* @Last Modified time: 2017-11-27 15:07:07
+* @Last Modified time: 2017-11-27 15:28:22
 */
 
 'use strict';
@@ -16,6 +16,8 @@ var sid = 'c6eb845b-21cb-e3a3-17e6-ac626d84e68b'
 var request = require('request')
 var cheerio = require('cheerio')
 var CronJob = require('cron').CronJob
+
+var co = require('co')
 
 var config = require('./config')
 var _md5 = require('./md5.js')
@@ -31,6 +33,15 @@ var options = {
 }
 class CodingService {
 	
+	 // 定时登录发布冒泡
+	 runAddTweet() {
+	 	let self = this
+	 	// 每天早上9:00更新一次
+	 	var job = new CronJob('0 6 * * *', function () {
+	 		self.addTweet()
+	 	}, null, true, 'Asia/Chongqing')
+	 }
+
 	// 登录Coding
 	loginCoding(){
 		var self = this
@@ -74,7 +85,10 @@ class CodingService {
 	// 发布冒泡
 	addTweet(text){
 		var self = this
-		text = 'halou'
+		self.getTextFromONE().then(function (result) {
+			text = result
+		})
+
 		var data = querystring.stringify({
 			content: '#早安# ' + text + ' *---摘自「一个」*',
 			location: '上海',
@@ -109,6 +123,15 @@ class CodingService {
 
 	// 获取ONE中的句子
 	getTextFromONE(){
+		return new Promise(function(resolve, reject) {
+			request('http://wufazhuce.com', function(error, response, body) {
+				if (!error && response.statusCode == 200) {
+					var $ = cheerio.load(body);
+					var text = $('.fp-one-cita a')[0].children[0].data
+					resolve(text);
+				}
+			})
+		}.bind(this))
 	}
 
 }
