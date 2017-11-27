@@ -1,0 +1,15 @@
+{
+	"name": "tweet-codingwith-ONE",
+	"version": "1.0.0",
+	"description": "tweet-codingwith-ONE",
+	"main": "index.js",
+	"scripts": {
+		"test": "npm run test"
+	},
+	"author": "imocco",
+	"license": "ISC",
+	"dependencies": {
+		"express": "4.12.3",
+		"leanengine": "1.2.2"
+	}
+}
